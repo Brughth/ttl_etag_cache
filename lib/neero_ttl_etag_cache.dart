@@ -1,11 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:neero_ttl_etag_cache/src/services/reactive_ttl_etag_cache_dio.dart';
 export 'src/services/reactive_ttl_etag_cache_dio.dart';
 export 'src/models/cached_ttl_etag_response.dart';
 export 'src/widgets/generic_ttl_etag_cache_viewer.dart';
 
 class NeeroTtlEtagCache {
-  static Future<void> init() {
-    return ReactiveCacheDio().init();
+  static Future<void> init({Dio? dio}) {
+    return ReactiveCacheDio().init(dio: dio);
   }
 
   static Future<void> invalidate<T>({

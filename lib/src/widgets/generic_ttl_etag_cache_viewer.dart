@@ -6,18 +6,17 @@ import 'package:isar_community/isar.dart';
 import 'package:neero_ttl_etag_cache/src/models/cached_ttl_etag_response.dart';
 import '../services/reactive_ttl_etag_cache_dio.dart';
 
-typedef CacheFullBuilder<T> =
-    Widget Function(
-      BuildContext context, {
-      T? data,
-      bool isStale,
-      bool isFetching,
-      Object? error,
-      DateTime? timestamp,
-      int? ttlSeconds,
-      String? etag,
-      VoidCallback? onRetry,
-    });
+typedef CacheFullBuilder<T> = Widget Function(
+  BuildContext context, {
+  T? data,
+  bool isStale,
+  bool isFetching,
+  Object? error,
+  DateTime? timestamp,
+  int? ttlSeconds,
+  String? etag,
+  VoidCallback? onRetry,
+});
 
 class GenericTtlEtagCacheViewer<T> extends StatefulWidget {
   final String url;
@@ -26,16 +25,18 @@ class GenericTtlEtagCacheViewer<T> extends StatefulWidget {
   final Map<String, String>? headers;
   final CacheFullBuilder<T> builder;
   final T Function(dynamic) fromJson;
+  final String Function(String url, Map<String, dynamic>? body)? getCacheKey;
 
   const GenericTtlEtagCacheViewer({
-    Key? key,
+    super.key,
     required this.url,
     required this.fromJson,
     required this.builder,
     this.method = 'GET',
     this.body,
     this.headers,
-  }) : super(key: key);
+    this.getCacheKey,
+  });
 
   @override
   GenericTtlEtagCacheViewerState<T> createState() =>
@@ -64,6 +65,7 @@ class GenericTtlEtagCacheViewerState<T>
         body: widget.body,
         headers: widget.headers,
         fromJson: widget.fromJson,
+        getCacheKey: widget.getCacheKey,
       );
       setState(() => error = null);
     } catch (e) {
@@ -79,13 +81,13 @@ class GenericTtlEtagCacheViewerState<T>
       stream: cache.isar.cachedTtlEtagResponses
           .watchLazy(fireImmediately: true)
           .asyncMap((_) async {
-            final results = await cache.isar.cachedTtlEtagResponses
-                .filter()
-                .urlEqualTo(cache.generateCacheKey(widget.url, widget.body))
-                .findAll();
+        final results = await cache.isar.cachedTtlEtagResponses
+            .filter()
+            .urlEqualTo(cache.generateCacheKey(widget.url, widget.body))
+            .findAll();
 
-            return results.cast<CachedTtlEtagResponse<dynamic>>();
-          }),
+        return results.cast<CachedTtlEtagResponse<dynamic>>();
+      }),
       builder: (context, snapshot) {
         final cached = snapshot.hasData && snapshot.data!.isNotEmpty
             ? snapshot.data!.first
