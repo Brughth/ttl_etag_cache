@@ -83,7 +83,8 @@ class GenericTtlEtagCacheViewerState<T>
           .asyncMap((_) async {
         final results = await cache.isar.cachedTtlEtagResponses
             .filter()
-            .urlEqualTo(cache.generateCacheKey(widget.url, widget.body))
+            .urlEqualTo(widget.getCacheKey?.call(widget.url, widget.body) ??
+                cache.generateCacheKey(widget.url, widget.body))
             .findAll();
 
         return results.cast<CachedTtlEtagResponse<dynamic>>();
