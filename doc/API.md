@@ -1004,4 +1004,4 @@ try {
 
 ---
 
-For more examples, see [README.md](README.md) and [example/](example/).
+For more examples, see [../README.md](../README.md) and [../example/lib/main.dart](../example/lib/main.dart).
