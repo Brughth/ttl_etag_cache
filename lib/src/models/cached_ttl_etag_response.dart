@@ -7,6 +7,7 @@ class CachedTtlEtagResponse<T> {
   Id id = Isar.autoIncrement;
 
   /// Clé unique pour GET ou POST
+  @Index(unique: true) // ✅ This ensures only ONE entry per URL
   late String url;
 
   late String data;

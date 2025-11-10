@@ -54,7 +54,21 @@ const CachedTtlEtagResponseSchema = CollectionSchema(
   deserialize: _cachedTtlEtagResponseDeserialize,
   deserializeProp: _cachedTtlEtagResponseDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'url': IndexSchema(
+      id: -5756857009679432345,
+      name: r'url',
+      unique: true,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'url',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _cachedTtlEtagResponseGetId,
@@ -149,6 +163,62 @@ void _cachedTtlEtagResponseAttach(
   object.id = id;
 }
 
+extension CachedTtlEtagResponseByIndex
+    on IsarCollection<CachedTtlEtagResponse> {
+  Future<CachedTtlEtagResponse?> getByUrl(String url) {
+    return getByIndex(r'url', [url]);
+  }
+
+  CachedTtlEtagResponse? getByUrlSync(String url) {
+    return getByIndexSync(r'url', [url]);
+  }
+
+  Future<bool> deleteByUrl(String url) {
+    return deleteByIndex(r'url', [url]);
+  }
+
+  bool deleteByUrlSync(String url) {
+    return deleteByIndexSync(r'url', [url]);
+  }
+
+  Future<List<CachedTtlEtagResponse?>> getAllByUrl(List<String> urlValues) {
+    final values = urlValues.map((e) => [e]).toList();
+    return getAllByIndex(r'url', values);
+  }
+
+  List<CachedTtlEtagResponse?> getAllByUrlSync(List<String> urlValues) {
+    final values = urlValues.map((e) => [e]).toList();
+    return getAllByIndexSync(r'url', values);
+  }
+
+  Future<int> deleteAllByUrl(List<String> urlValues) {
+    final values = urlValues.map((e) => [e]).toList();
+    return deleteAllByIndex(r'url', values);
+  }
+
+  int deleteAllByUrlSync(List<String> urlValues) {
+    final values = urlValues.map((e) => [e]).toList();
+    return deleteAllByIndexSync(r'url', values);
+  }
+
+  Future<Id> putByUrl(CachedTtlEtagResponse object) {
+    return putByIndex(r'url', object);
+  }
+
+  Id putByUrlSync(CachedTtlEtagResponse object, {bool saveLinks = true}) {
+    return putByIndexSync(r'url', object, saveLinks: saveLinks);
+  }
+
+  Future<List<Id>> putAllByUrl(List<CachedTtlEtagResponse> objects) {
+    return putAllByIndex(r'url', objects);
+  }
+
+  List<Id> putAllByUrlSync(List<CachedTtlEtagResponse> objects,
+      {bool saveLinks = true}) {
+    return putAllByIndexSync(r'url', objects, saveLinks: saveLinks);
+  }
+}
+
 extension CachedTtlEtagResponseQueryWhereSort
     on QueryBuilder<CachedTtlEtagResponse, CachedTtlEtagResponse, QWhere> {
   QueryBuilder<CachedTtlEtagResponse, CachedTtlEtagResponse, QAfterWhere>
@@ -226,6 +296,51 @@ extension CachedTtlEtagResponseQueryWhere on QueryBuilder<CachedTtlEtagResponse,
         upper: upperId,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<CachedTtlEtagResponse, CachedTtlEtagResponse, QAfterWhereClause>
+      urlEqualTo(String url) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'url',
+        value: [url],
+      ));
+    });
+  }
+
+  QueryBuilder<CachedTtlEtagResponse, CachedTtlEtagResponse, QAfterWhereClause>
+      urlNotEqualTo(String url) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [],
+              upper: [url],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [url],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [url],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [],
+              upper: [url],
+              includeUpper: false,
+            ));
+      }
     });
   }
 }

@@ -109,6 +109,9 @@ class ReactiveCacheDio {
         ..timestamp = DateTime.now()
         ..ttlSeconds = ttl.inSeconds
         ..isStale = false;
+      if (cached != null) {
+        newCache.id = cached.id;
+      }
 
       await isar.writeTxn(() async {
         await isar.cachedTtlEtagResponses.put(newCache);
@@ -126,17 +129,13 @@ class ReactiveCacheDio {
         );
         cached.ttlSeconds = ttl.inSeconds;
         await isar.writeTxn(() async {
-          await isar.cachedTtlEtagResponses.put(cached!);
+          await isar.cachedTtlEtagResponses.put(cached);
         });
         _updateStreamController.add(null);
       } else {
-        // fallback sur cache stale existant
-        cached ??= cached;
         rethrow;
       }
     } catch (_) {
-      // fallback sur cache stale existant
-      cached ??= cached;
       rethrow;
     }
   }
