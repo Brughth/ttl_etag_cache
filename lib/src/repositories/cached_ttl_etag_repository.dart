@@ -2,10 +2,37 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:isar_community/isar.dart';
 import 'package:rxdart/rxdart.dart';
-import '../services/reactive_ttl_etag_cache_dio.dart';
+
 import '../models/cached_ttl_etag_response.dart';
 import '../models/cache_ttl_etag_state.dart';
+import '../services/reactive_cache_dio.dart';
 
+/// Repository pattern implementation for cached data access
+///
+/// This repository provides a reactive stream-based interface to cached data,
+/// automatically handling encryption/decryption, TTL validation, and state updates.
+///
+/// Example:
+/// ```dart
+/// final userRepo = CachedTtlEtagRepository<User>(
+///   url: 'https://api.example.com/user/123',
+///   fromJson: (json) => User.fromJson(json),
+///   defaultTtl: Duration(minutes: 5),
+/// );
+///
+/// // Listen to state changes
+/// userRepo.stream.listen((state) {
+///   if (state.hasData) {
+///     print('User: ${state.data!.name}');
+///   }
+/// });
+///
+/// // Fetch data
+/// await userRepo.fetch();
+///
+/// // Dispose when done
+/// userRepo.dispose();
+/// ```
 class CachedTtlEtagRepository<T> {
   final ReactiveCacheDio _cache;
   final String url;
@@ -22,6 +49,17 @@ class CachedTtlEtagRepository<T> {
   StreamSubscription? _cacheSubscription;
   StreamSubscription? _updateSubscription;
 
+  /// Create a new repository instance
+  ///
+  /// [url] - The URL to fetch data from
+  /// [fromJson] - Function to deserialize JSON to type T
+  /// [cache] - Optional ReactiveCacheDio instance (uses singleton by default)
+  /// [method] - HTTP method (default: GET)
+  /// [body] - Optional request body
+  /// [headers] - Optional HTTP headers
+  /// [defaultTtl] - Default time-to-live for cache entries
+  /// [getCacheKey] - Optional custom cache key generator
+  /// [getDataFromResponseData] - Optional response data extractor
   CachedTtlEtagRepository({
     required this.url,
     required this.fromJson,
@@ -41,20 +79,26 @@ class CachedTtlEtagRepository<T> {
     _initialize();
   }
 
-  /// Stream of cache state with all UI-required data
+  /// Stream of cache state updates
+  ///
+  /// Emits a new state whenever the cache is updated, including:
+  /// - Data changes
+  /// - Loading state changes
+  /// - Error state changes
+  /// - Stale/TTL status changes
   Stream<CacheTtlEtagState<T>> get stream => _stateController.stream;
 
   /// Current state snapshot
   CacheTtlEtagState<T> get state => _stateController.value;
 
   void _initialize() {
-    // Watch for cache changes
+    // Watch for cache changes in the database
     _cacheSubscription = _cache.isar.cachedTtlEtagResponses
         .watchLazy(fireImmediately: true)
         .asyncMap((_) => _loadCacheEntry())
         .listen(_updateState);
 
-    // Watch for reactive updates (fetch completion, invalidation)
+    // Watch for cache update events
     _updateSubscription = _cache.updateStream.listen((_) {
       // State will be updated via _cacheSubscription
     });
@@ -74,9 +118,29 @@ class CachedTtlEtagRepository<T> {
     final currentState = _stateController.value;
 
     T? data;
-    if (cached?.data != null) {
+    if (cached != null) {
       try {
-        data = fromJson(jsonDecode(cached!.data));
+        // Get data based on encryption status
+        String? rawData;
+        if (cached.isEncrypted) {
+          if (_cache.isEncryptionEnabled) {
+            rawData = _cache.getDataFromCache(cached);
+          } else {
+            // Can't decrypt without encryption enabled
+            _stateController.add(currentState.copyWith(
+              error:
+                  Exception('Cache is encrypted but encryption is not enabled'),
+              isLoading: false,
+            ));
+            return;
+          }
+        } else {
+          rawData = cached.data;
+        }
+
+        if (rawData != null) {
+          data = fromJson(jsonDecode(rawData));
+        }
       } catch (e) {
         _stateController.add(currentState.copyWith(
           error: e,
@@ -97,7 +161,23 @@ class CachedTtlEtagRepository<T> {
     ));
   }
 
-  /// Fetch fresh data from the network
+  /// Fetch data from the network
+  ///
+  /// This method:
+  /// 1. Sets loading state
+  /// 2. Calls the cache service to fetch data
+  /// 3. Updates state based on success or failure
+  ///
+  /// [forceRefresh] - If true, ignores cache and forces a network request
+  ///
+  /// Example:
+  /// ```dart
+  /// // Normal fetch (uses cache if valid)
+  /// await repo.fetch();
+  ///
+  /// // Force refresh (bypasses cache)
+  /// await repo.fetch(forceRefresh: true);
+  /// ```
   Future<void> fetch({bool forceRefresh = false}) async {
     _stateController.add(_stateController.value.copyWith(
       isLoading: true,
@@ -130,9 +210,23 @@ class CachedTtlEtagRepository<T> {
   }
 
   /// Force refresh from the network
+  ///
+  /// Shorthand for `fetch(forceRefresh: true)`
+  ///
+  /// Example:
+  /// ```dart
+  /// await repo.refresh();
+  /// ```
   Future<void> refresh() => fetch(forceRefresh: true);
 
-  /// Invalidate the cache
+  /// Invalidate the cache entry
+  ///
+  /// This removes the cache entry from storage and emits an update
+  ///
+  /// Example:
+  /// ```dart
+  /// await repo.invalidate();
+  /// ```
   Future<void> invalidate() async {
     await _cache.invalidate<T>(
       url: url,
@@ -142,6 +236,18 @@ class CachedTtlEtagRepository<T> {
   }
 
   /// Dispose of the repository
+  ///
+  /// This cancels all subscriptions and closes the state stream.
+  /// Always call this when the repository is no longer needed.
+  ///
+  /// Example:
+  /// ```dart
+  /// @override
+  /// void dispose() {
+  ///   repo.dispose();
+  ///   super.dispose();
+  /// }
+  /// ```
   void dispose() {
     _cacheSubscription?.cancel();
     _updateSubscription?.cancel();
