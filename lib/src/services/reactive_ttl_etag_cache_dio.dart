@@ -94,33 +94,34 @@ class ReactiveCacheDio {
         options: Options(method: method, headers: headers),
       );
 
-      if ((response.statusCode ?? 0) == 200) {
-        final jsonData =
-            getDataFromResponseData?.call(response.data) ?? response.data;
-        final etag = response.headers.value('etag');
-        final ttl = _calculateTtl(
-          response.headers.map.map((k, v) => MapEntry(k, v.join(','))),
-          defaultTtl,
-        );
+      final jsonData =
+          getDataFromResponseData?.call(response.data) ?? response.data;
+      final etag = response.headers.value('etag');
+      final ttl = _calculateTtl(
+        response.headers.map.map((k, v) => MapEntry(k, v.join(','))),
+        defaultTtl,
+      );
 
-        final newCache = CachedTtlEtagResponse<T>()
-          ..url = cacheKey
-          ..data = jsonEncode(jsonData)
-          ..etag = etag
-          ..timestamp = DateTime.now()
-          ..ttlSeconds = ttl.inSeconds
-          ..isStale = false;
+      final newCache = CachedTtlEtagResponse<T>()
+        ..url = cacheKey
+        ..data = jsonEncode(jsonData)
+        ..etag = etag
+        ..timestamp = DateTime.now()
+        ..ttlSeconds = ttl.inSeconds
+        ..isStale = false;
 
-        await isar.writeTxn(() async {
-          await isar.cachedTtlEtagResponses.put(newCache);
-        });
+      await isar.writeTxn(() async {
+        await isar.cachedTtlEtagResponses.put(newCache);
+      });
 
-        _updateStreamController.add(null);
-      } else if ((response.statusCode ?? 0) == 304 && cached != null) {
+      _updateStreamController.add(null);
+    } on DioException catch (e) {
+      var response = e.response;
+      if ((response?.statusCode ?? 0) == 304 && cached != null) {
         cached.timestamp = DateTime.now();
         cached.isStale = false;
         final ttl = _calculateTtl(
-          response.headers.map.map((k, v) => MapEntry(k, v.join(','))),
+          response!.headers.map.map((k, v) => MapEntry(k, v.join(','))),
           defaultTtl,
         );
         cached.ttlSeconds = ttl.inSeconds;
@@ -128,6 +129,10 @@ class ReactiveCacheDio {
           await isar.cachedTtlEtagResponses.put(cached!);
         });
         _updateStreamController.add(null);
+      } else {
+        // fallback sur cache stale existant
+        cached ??= cached;
+        rethrow;
       }
     } catch (_) {
       // fallback sur cache stale existant

@@ -33,8 +33,34 @@ class Todo {
       Todo(id: json['id'], title: json['title'], completed: json['completed']);
 }
 
-class TodoList extends StatelessWidget {
+class TodoList extends StatefulWidget {
   const TodoList({super.key});
+
+  @override
+  State<TodoList> createState() => _TodoListState();
+}
+
+class _TodoListState extends State<TodoList> {
+  late final CachedTtlEtagRepository<List<Todo>> _repository;
+
+  @override
+  void initState() {
+    super.initState();
+    _repository = CachedTtlEtagRepository<List<Todo>>(
+      url: 'https://jsonplaceholder.typicode.com/todos',
+      fromJson: (json) {
+        final list = json as List;
+        return list.map((e) => Todo.fromJson(e)).toList();
+      },
+      defaultTtl: Duration(minutes: 5),
+    );
+  }
+
+  @override
+  void dispose() {
+    _repository.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +74,7 @@ class TodoList extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   // Invalidate le cache local
-                  await NeeroTtlEtagCache.invalidate<List<Todo>>(
-                    url: 'https://jsonplaceholder.typicode.com/todos',
-                  );
+                  await _repository.invalidate();
                 },
                 child: const Text('Clear Local Cache'),
               ),
@@ -58,115 +82,59 @@ class TodoList extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   // Force refetch depuis le serveur
-                  await NeeroTtlEtagCache.refetch<List<Todo>>(
-                    url: 'https://jsonplaceholder.typicode.com/todos',
-                    fromJson: (json) {
-                      final list = json as List;
-                      return list.map((e) => Todo.fromJson(e)).toList();
-                    },
-                    headers: {"accept": "application/json"},
-                  );
+                  await _repository.fetch();
                 },
-                child: const Text('Refetch Server'),
+                child: const Text('Refetch'),
               ),
               ElevatedButton(
                 onPressed: () async {
                   // Force refetch depuis le serveur
-                  await NeeroTtlEtagCache.refetch<List<Todo>>(
-                    url: 'https://jsonplaceholder.typicode.com/todos',
-                    fromJson: (json) {
-                      final list = json as List;
-                      return list.map((e) => Todo.fromJson(e)).toList();
-                    },
-                    headers: {"accept": "application/json"},
-                    forceRefresh: true,
-                  );
+                  _repository.refresh();
                 },
                 child: const Text('Force Server'),
               ),
             ],
           ),
         ),
+
         // Zone liste avec cache réactif
         Expanded(
-          child: GenericTtlEtagCacheViewer<List<Todo>>(
-            url: 'https://jsonplaceholder.typicode.com/todos',
-            method: 'GET',
-            fromJson: (json) {
-              final list = json as List;
-              return list.map((e) => Todo.fromJson(e)).toList();
+          child: StreamBuilder<CacheTtlEtagState<List<Todo>>>(
+            stream: _repository.stream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              var cache = snapshot.data!;
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Stale: ${cache.isStale} | TTL: ${cache.ttlSeconds ?? 0}s |  Timestamp: ${cache.timestamp?.toLocal().toString() ?? '-'} | Error: ${cache.error}',
+                      style: TextStyle(
+                        color: cache.isStale ? Colors.orange : Colors.green,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: snapshot.data!.data?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final todo = snapshot.data!.data![index];
+                        return ListTile(
+                          title: Text(todo.title),
+                          subtitle: Text('Completed: ${todo.completed}'),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
             },
-
-            builder:
-                (
-                  context, {
-                  data,
-                  isStale = false,
-                  isFetching = false,
-                  error,
-                  timestamp,
-                  ttlSeconds,
-                  etag,
-                  onRetry,
-                }) {
-                  if (error != null && (data == null || data.isEmpty)) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('Error: $error'),
-                          const SizedBox(height: 8),
-                          ElevatedButton(
-                            onPressed: onRetry,
-                            child: const Text('Retry'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  if (isFetching && (data == null || data.isEmpty)) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  final todos = data ?? [];
-
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "IsLoading:${isFetching}, IsStale:${isStale}, Error:$error",
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: RefreshIndicator(
-                          onRefresh: () async => onRetry?.call(),
-                          child: ListView.builder(
-                            itemCount: todos.length,
-                            itemBuilder: (_, index) {
-                              final todo = todos[index];
-                              return ListTile(
-                                title: Text(todo.title),
-                                subtitle: Text(
-                                  'Completed: ${todo.completed} | '
-                                  'Stale: $isStale | TTL: ${ttlSeconds ?? 0}s | '
-                                  'Updated: ${timestamp?.toLocal().toString() ?? '-'}',
-                                  style: TextStyle(
-                                    color: isStale
-                                        ? Colors.orange
-                                        : Colors.green,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
           ),
         ),
       ],
