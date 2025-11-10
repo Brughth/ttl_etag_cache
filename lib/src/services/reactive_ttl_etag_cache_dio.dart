@@ -119,6 +119,11 @@ class ReactiveCacheDio {
       } else if ((response.statusCode ?? 0) == 304 && cached != null) {
         cached.timestamp = DateTime.now();
         cached.isStale = false;
+        final ttl = _calculateTtl(
+          response.headers.map.map((k, v) => MapEntry(k, v.join(','))),
+          defaultTtl,
+        );
+        cached.ttlSeconds = ttl.inSeconds;
         await isar.writeTxn(() async {
           await isar.cachedTtlEtagResponses.put(cached!);
         });

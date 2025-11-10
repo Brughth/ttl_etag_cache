@@ -7,26 +7,24 @@ environment:
   sdk: ^3.6.2
   flutter: '>=3.3.0'
 
-isar_version: &isar_version 3.3.0-dev.3 # define the version to be used
 
 dependencies:
   dio: ^5.9.0
   flutter:
     sdk: flutter
-  isar_community: 
-    version: *isar_version
+  isar_community: ^3.3.0-dev.3
   isar_community_flutter_libs: # contains Isar Core
-    version: *isar_version
+    version: ^3.3.0-dev.3
   path_provider: ^2.1.5
   plugin_platform_interface: ^2.0.2
+  rxdart: ^0.28.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
   build_runner: ^2.4.13
-  isar_community_generator: 
-    version: *isar_version
+  isar_community_generator: ^3.3.0-dev.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
