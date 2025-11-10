@@ -16,7 +16,7 @@ Your professional Flutter caching plugin is now complete with all necessary file
 - `lib/src/models/cached_ttl_etag_response.dart` - Isar database model
 
 ✅ **Services**
-- `lib/src/services/reactive_cache_dio.dart` - Core caching engine
+- `lib/src/services/reactive_ttl_etag_cache_dio.dart` - Core caching engine
 - `lib/src/services/encryption_service.dart` - AES-256 encryption
 
 ✅ **Repository**

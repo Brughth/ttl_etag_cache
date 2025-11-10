@@ -12,7 +12,7 @@ neero_ttl_etag_cache/
 │       │   ├── cached_ttl_etag_response.g.dart    # Generated Isar code
 │       │   └── cache_ttl_etag_state.dart          # State management model
 │       ├── services/
-│       │   ├── reactive_cache_dio.dart   # Core caching service
+│       │   ├── reactive_ttl_etag_cache_dio.dart   # Core caching service
 │       │   └── encryption_service.dart             # AES-256 encryption
 │       └── repositories/
 │           └── cached_ttl_etag_repository.dart    # Repository pattern
@@ -51,7 +51,7 @@ The primary interface for the plugin. Exports all public APIs.
 ```dart
 library neero_ttl_etag_cache;
 
-export 'src/services/reactive_cache_dio.dart';
+export 'src/services/reactive_ttl_etag_cache_dio.dart';
 export 'src/services/encryption_service.dart';
 export 'src/models/cached_ttl_etag_response.dart';
 export 'src/models/cache_ttl_etag_state.dart';
@@ -130,7 +130,7 @@ class CacheTtlEtagState<T> {
 
 #### ReactiveCacheDio
 
-**File:** `lib/src/services/reactive_cache_dio.dart`
+**File:** `lib/src/services/reactive_ttl_etag_cache_dio.dart`
 
 Core caching service with TTL and ETag support.
 

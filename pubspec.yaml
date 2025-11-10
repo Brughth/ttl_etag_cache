@@ -12,19 +12,19 @@ dependencies:
     sdk: flutter
   
   # HTTP client
-  dio: ^5.4.0
+  dio: ^5.9.0
   
   # Local database
-  isar_community: ^3.1.0+1
-  isar_flutter_libs_community: ^3.1.0+1
+  isar_community: ^3.3.0-dev.3
+  isar_community_flutter_libs: ^3.3.0-dev.3
   
   # Reactive streams
-  rxdart: ^0.27.7
+  rxdart: ^0.28.0
   
   # Encryption
   encrypt: ^5.0.3
-  flutter_secure_storage: ^9.0.0
-  crypto: ^3.0.3
+  flutter_secure_storage: ^9.2.4
+  crypto: ^3.0.7
   
   # File system
   path_provider: ^2.1.1
@@ -34,8 +34,8 @@ dev_dependencies:
     sdk: flutter
   
   # Code generation
-  build_runner: ^2.4.6
-  isar_generator_community: ^3.1.0+1
+  build_runner: ^2.7.1
+  isar_community_generator: ^3.3.0-dev.3
   
   # Linting
   flutter_lints: ^3.0.0
