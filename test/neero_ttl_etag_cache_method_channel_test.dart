@@ -1,12 +1,12 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:neero_ttl_etag_cache/neero_ttl_etag_cache_method_channel.dart';
+import 'package:ttl_etag_cache/ttl_etag_cache_method_channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   MethodChannelNeeroTtlEtagCache platform = MethodChannelNeeroTtlEtagCache();
-  const MethodChannel channel = MethodChannel('neero_ttl_etag_cache');
+  const MethodChannel channel = MethodChannel('ttl_etag_cache');
 
   setUp(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(

@@ -1,14 +1,15 @@
-library neero_ttl_etag_cache;
+library ttl_etag_cache;
 
 import 'package:dio/dio.dart';
-import 'package:neero_ttl_etag_cache/src/services/reactive_cache_dio.dart';
 
-export 'src/services/encryption_service.dart';
-export 'src/models/cached_ttl_etag_response.dart';
-export 'src/models/cache_ttl_etag_state.dart';
-export 'src/repositories/cached_ttl_etag_repository.dart';
+import 'src/services/reactive_cache_dio.dart';
+
 export 'src/interceptors/cache_ttl_etag_interceptor.dart';
 export 'src/models/cache_ttl_etag_config.dart';
+export 'src/models/cache_ttl_etag_state.dart';
+export 'src/models/cached_ttl_etag_response.dart';
+export 'src/repositories/cached_ttl_etag_repository.dart';
+export 'src/services/encryption_service.dart';
 
 /// Main entry point for Neero TTL/ETag Cache
 ///
@@ -18,7 +19,7 @@ export 'src/models/cache_ttl_etag_config.dart';
 /// - Optional AES-256 encryption
 /// - Reactive stream-based updates
 /// - Offline-first capabilities
-class NeeroTtlEtagCache {
+class TtlEtagCache {
   /// Initialize the cache system
   ///
   /// [dio] - Optional Dio instance for HTTP requests
@@ -26,7 +27,7 @@ class NeeroTtlEtagCache {
   ///
   /// Example:
   /// ```dart
-  /// await NeeroTtlEtagCache.init(
+  /// await TtlEtagCache.init(
   ///   enableEncryption: true,
   /// );
   /// ```
@@ -48,7 +49,7 @@ class NeeroTtlEtagCache {
   ///
   /// Example:
   /// ```dart
-  /// await NeeroTtlEtagCache.invalidate<User>(
+  /// await TtlEtagCache.invalidate<User>(
   ///   url: 'https://api.example.com/user/123',
   /// );
   /// ```
@@ -84,7 +85,7 @@ class NeeroTtlEtagCache {
   ///
   /// Example:
   /// ```dart
-  /// await NeeroTtlEtagCache.refetch<User>(
+  /// await TtlEtagCache.refetch<User>(
   ///   url: 'https://api.example.com/user/123',
   ///   defaultTtl: Duration(minutes: 5),
   ///   fromJson: (json) => User.fromJson(json),
@@ -118,7 +119,7 @@ class NeeroTtlEtagCache {
   ///
   /// Example:
   /// ```dart
-  /// await NeeroTtlEtagCache.clearAll();
+  /// await TtlEtagCache.clearAll();
   /// ```
   static Future<void> clearAll() {
     return ReactiveCacheDio().clearAll();
@@ -130,7 +131,7 @@ class NeeroTtlEtagCache {
   ///
   /// Example:
   /// ```dart
-  /// await NeeroTtlEtagCache.clearAndResetEncryption();
+  /// await TtlEtagCache.clearAndResetEncryption();
   /// ```
   static Future<void> clearAndResetEncryption() {
     return ReactiveCacheDio().clearAndResetEncryption();
@@ -145,7 +146,7 @@ class NeeroTtlEtagCache {
   /// Example:
   /// ```dart
   /// // Enable encryption on existing plain cache
-  /// await NeeroTtlEtagCache.migrateEncryption(enableEncryption: true);
+  /// await TtlEtagCache.migrateEncryption(enableEncryption: true);
   /// ```
   static Future<void> migrateEncryption({required bool enableEncryption}) {
     return ReactiveCacheDio().migrateEncryption(

@@ -249,7 +249,7 @@ final dashboardRepo = CachedTtlEtagRepository<Dashboard>(...);
 
 ### Updated Documentation
 - ✅ **README.md** - Now shows interceptor first
-- ✅ **lib/neero_ttl_etag_cache.dart** - Exports interceptor
+- ✅ **lib/ttl_etag_cache.dart** - Exports interceptor
 - ✅ Comparison table added
 - ✅ Decision guide included
 

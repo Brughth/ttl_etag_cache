@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
+import '../../ttl_etag_cache.dart';
 import '../models/cached_ttl_etag_response.dart';
-import 'encryption_service.dart';
+import './encryption_service.dart';
 
 /// Core caching service with TTL, ETag support, and optional encryption
 ///
@@ -212,19 +213,12 @@ class ReactiveCacheDio {
   /// );
   /// ```
   Future<void> fetchReactive<T>({
-    required String url,
-    String method = 'GET',
-    Map<String, dynamic>? body,
-    Map<String, String>? headers,
-    Duration? defaultTtl,
+    required CacheTtlEtagConfig<T> config,
     bool forceRefresh = false,
-    required T Function(dynamic) fromJson,
-    String Function(String url, Map<String, dynamic>? body)? getCacheKey,
-    String Function(dynamic responseData)? getDataFromResponseData,
   }) async {
-    headers ??= {};
-    final cacheKey =
-        getCacheKey?.call(url, body) ?? generateCacheKey(url, body);
+    Map<String, dynamic> headers = config.headers ?? {};
+    final cacheKey = config.getCacheKey?.call(config.url, config.body) ??
+        generateCacheKey(config.url, config.body);
 
     CachedTtlEtagResponse? cached = await _getCachedEntry(cacheKey);
 
@@ -255,17 +249,17 @@ class ReactiveCacheDio {
 
     try {
       final response = await _dio.request(
-        url,
-        data: body,
-        options: Options(method: method, headers: headers),
+        config.url,
+        data: config.body,
+        options: Options(method: config.method, headers: headers),
       );
 
       final jsonData =
-          getDataFromResponseData?.call(response.data) ?? response.data;
+          config.getDataFromResponseData?.call(response.data) ?? response.data;
       final etag = response.headers.value('etag');
       final ttl = _calculateTtl(
         response.headers.map.map((k, v) => MapEntry(k, v.join(','))),
-        defaultTtl,
+        config.defaultTtl,
       );
 
       await _storeCacheEntry(
@@ -283,7 +277,7 @@ class ReactiveCacheDio {
         cached.isStale = false;
         final ttl = _calculateTtl(
           response!.headers.map.map((k, v) => MapEntry(k, v.join(','))),
-          defaultTtl,
+          config.defaultTtl,
         );
         cached.ttlSeconds = ttl.inSeconds;
         await isar.writeTxn(() async {
@@ -311,12 +305,10 @@ class ReactiveCacheDio {
   /// );
   /// ```
   Future<void> invalidate<T>({
-    required String url,
-    Map<String, dynamic>? body,
-    String Function(String url, Map<String, dynamic>? body)? getCacheKey,
+    required CacheTtlEtagConfig<T> config,
   }) async {
-    final cacheKey =
-        getCacheKey?.call(url, body) ?? generateCacheKey(url, body);
+    final cacheKey = config.getCacheKey?.call(config.url, config.body) ??
+        generateCacheKey(config.url, config.body);
     await isar.writeTxn(() async {
       final cached = await _getCachedEntry(cacheKey);
       if (cached != null) {

@@ -4,7 +4,7 @@ Complete API reference for Neero TTL/ETag Cache.
 
 ## Table of Contents
 
-- [NeeroTtlEtagCache](#neerottletagcache)
+- [TtlEtagCache](#neerottletagcache)
 - [CachedTtlEtagRepository](#cachedttletagrepository)
 - [CacheTtlEtagState](#cachettle tagstate)
 - [ReactiveCacheDio](#reactivecachedeo)
@@ -13,7 +13,7 @@ Complete API reference for Neero TTL/ETag Cache.
 
 ---
 
-## NeeroTtlEtagCache
+## TtlEtagCache
 
 Main entry point for cache operations.
 
@@ -36,7 +36,7 @@ static Future<void> init({
 
 **Example:**
 ```dart
-await NeeroTtlEtagCache.init(enableEncryption: true);
+await TtlEtagCache.init(enableEncryption: true);
 ```
 
 ---
@@ -72,7 +72,7 @@ static Future<void> refetch<T>({
 
 **Example:**
 ```dart
-await NeeroTtlEtagCache.refetch<User>(
+await TtlEtagCache.refetch<User>(
   url: 'https://api.example.com/user/123',
   defaultTtl: Duration(minutes: 5),
   fromJson: (json) => User.fromJson(json),
@@ -96,7 +96,7 @@ static Future<void> invalidate<T>({
 
 **Example:**
 ```dart
-await NeeroTtlEtagCache.invalidate<User>(
+await TtlEtagCache.invalidate<User>(
   url: 'https://api.example.com/user/123',
 );
 ```
@@ -113,7 +113,7 @@ static Future<void> clearAll()
 
 **Example:**
 ```dart
-await NeeroTtlEtagCache.clearAll();
+await TtlEtagCache.clearAll();
 ```
 
 ---
@@ -129,7 +129,7 @@ static Future<void> clearAndResetEncryption()
 **Example:**
 ```dart
 // On user logout
-await NeeroTtlEtagCache.clearAndResetEncryption();
+await TtlEtagCache.clearAndResetEncryption();
 ```
 
 ---
@@ -150,10 +150,10 @@ static Future<void> migrateEncryption({
 **Example:**
 ```dart
 // Enable encryption on existing cache
-await NeeroTtlEtagCache.migrateEncryption(enableEncryption: true);
+await TtlEtagCache.migrateEncryption(enableEncryption: true);
 
 // Disable encryption
-await NeeroTtlEtagCache.migrateEncryption(enableEncryption: false);
+await TtlEtagCache.migrateEncryption(enableEncryption: false);
 ```
 
 ---
@@ -170,7 +170,7 @@ static bool get isEncryptionEnabled
 
 **Example:**
 ```dart
-if (NeeroTtlEtagCache.isEncryptionEnabled) {
+if (TtlEtagCache.isEncryptionEnabled) {
   print('Cache is encrypted');
 }
 ```
@@ -994,12 +994,12 @@ try {
 
 4. **Enable encryption for sensitive data**
    ```dart
-   await NeeroTtlEtagCache.init(enableEncryption: true);
+   await TtlEtagCache.init(enableEncryption: true);
    ```
 
 5. **Clear cache on logout**
    ```dart
-   await NeeroTtlEtagCache.clearAndResetEncryption();
+   await TtlEtagCache.clearAndResetEncryption();
    ```
 
 ---

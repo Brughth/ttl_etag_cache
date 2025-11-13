@@ -1,7 +1,7 @@
-import 'package:neero_ttl_etag_cache/src/services/reactive_cache_dio.dart';
+import '../services/reactive_cache_dio.dart';
 
 /// Configuration class for CachedTtlEtagRepository
-class CachedTtlEtagConfig<T> {
+class CacheTtlEtagConfig<T> {
   final ReactiveCacheDio cache;
   final String url;
   final String method;
@@ -23,7 +23,7 @@ class CachedTtlEtagConfig<T> {
   /// [defaultTtl] - Default time-to-live for cache entries
   /// [getCacheKey] - Optional custom cache key generator
   /// [getDataFromResponseData] - Optional response data extractor
-  CachedTtlEtagConfig({
+  CacheTtlEtagConfig({
     required this.url,
     required this.fromJson,
     ReactiveCacheDio? cache,
@@ -36,7 +36,7 @@ class CachedTtlEtagConfig<T> {
   }) : cache = cache ?? ReactiveCacheDio();
 
   /// Create a copy of this config with some fields replaced
-  CachedTtlEtagConfig<T> copyWith({
+  CacheTtlEtagConfig<T> copyWith({
     ReactiveCacheDio? cache,
     String? url,
     Map<String, dynamic>? body,
@@ -47,7 +47,7 @@ class CachedTtlEtagConfig<T> {
     String Function(String url, Map<String, dynamic>? body)? getCacheKey,
     String Function(dynamic responseData)? getDataFromResponseData,
   }) {
-    return CachedTtlEtagConfig<T>(
+    return CacheTtlEtagConfig<T>(
       cache: cache ?? this.cache,
       url: url ?? this.url,
       body: body ?? this.body,

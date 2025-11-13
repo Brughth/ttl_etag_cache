@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:neero_ttl_etag_cache/neero_ttl_etag_cache.dart';
+import 'package:ttl_etag_cache/ttl_etag_cache.dart';
 
 /// Example showing the interceptor approach - drop-in caching for existing apps
 void main() async {

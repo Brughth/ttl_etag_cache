@@ -28,7 +28,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  neero_ttl_etag_cache: ^1.0.0
+  ttl_etag_cache: ^1.0.0
 ```
 
 Then run:
@@ -44,7 +44,7 @@ flutter pub get
 Perfect for adding caching to **existing apps** with zero code changes:
 
 ```dart
-import 'package:neero_ttl_etag_cache/neero_ttl_etag_cache.dart';
+import 'package:ttl_etag_cache/ttl_etag_cache.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,16 +76,16 @@ final response = await dio.get('https://api.example.com/users');
 For clean architecture with reactive state management:
 
 ```dart
-import 'package:neero_ttl_etag_cache/neero_ttl_etag_cache.dart';
+import 'package:ttl_etag_cache/ttl_etag_cache.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize without encryption
-  await NeeroTtlEtagCache.init();
+  await TtlEtagCache.init();
   
   // OR with encryption enabled
-  await NeeroTtlEtagCache.init(enableEncryption: true);
+  await TtlEtagCache.init(enableEncryption: true);
   
   runApp(MyApp());
 }
@@ -94,14 +94,14 @@ void main() async {
 ### 2. Create a Repository
 
 ```dart
-import 'package:neero_ttl_etag_cache/neero_ttl_etag_cache.dart';
+import 'package:ttl_etag_cache/ttl_etag_cache.dart';
 
 class UserRepository {
   late final CachedTtlEtagRepository<User> _repository;
   
   UserRepository(String userId) {
     _repository = CachedTtlEtagRepository<User>(
-      config: CachedTtlEtagConfig<User>(
+      config: CacheTtlEtagConfig<User>(
         url: 'https://api.example.com/users/$userId',
         fromJson: (json) => User.fromJson(json),
         defaultTtl: Duration(minutes: 5),
@@ -348,7 +348,7 @@ class CacheTtlEtagState<T> {
 Enable encryption during initialization:
 
 ```dart
-await NeeroTtlEtagCache.init(enableEncryption: true);
+await TtlEtagCache.init(enableEncryption: true);
 ```
 
 ### How It Works
@@ -365,17 +365,17 @@ Convert between encrypted and plain cache:
 
 ```dart
 // Enable encryption on existing plain cache
-await NeeroTtlEtagCache.migrateEncryption(enableEncryption: true);
+await TtlEtagCache.migrateEncryption(enableEncryption: true);
 
 // Disable encryption
-await NeeroTtlEtagCache.migrateEncryption(enableEncryption: false);
+await TtlEtagCache.migrateEncryption(enableEncryption: false);
 ```
 
 ### Security Best Practices
 
 ```dart
 // On user logout - clear cache and reset key
-await NeeroTtlEtagCache.clearAndResetEncryption();
+await TtlEtagCache.clearAndResetEncryption();
 
 // Per-user encryption
 final encryption = EncryptionService();
@@ -457,15 +457,15 @@ final repo = CachedTtlEtagRepository<SearchResult>(
 
 ```dart
 // Invalidate specific cache
-await NeeroTtlEtagCache.invalidate<User>(
+await TtlEtagCache.invalidate<User>(
   url: 'https://api.example.com/user/123',
 );
 
 // Clear all cache
-await NeeroTtlEtagCache.clearAll();
+await TtlEtagCache.clearAll();
 
 // Manual refetch
-await NeeroTtlEtagCache.refetch<User>(
+await TtlEtagCache.refetch<User>(
   url: 'https://api.example.com/user/123',
   fromJson: (json) => User.fromJson(json),
   forceRefresh: true,
@@ -616,7 +616,7 @@ final customDio = Dio(
 
 customDio.interceptors.add(LogInterceptor());
 
-await NeeroTtlEtagCache.init(
+await TtlEtagCache.init(
   dio: customDio,
   enableEncryption: true,
 );
@@ -630,7 +630,7 @@ class CacheConfig {
     // Enable encryption only in production
     final enableEncryption = kReleaseMode;
     
-    await NeeroTtlEtagCache.init(
+    await TtlEtagCache.init(
       enableEncryption: enableEncryption,
     );
     
@@ -682,13 +682,13 @@ class CacheConfig {
 **1. "EncryptionService not initialized"**
 ```dart
 // Solution: Initialize cache with encryption enabled
-await NeeroTtlEtagCache.init(enableEncryption: true);
+await TtlEtagCache.init(enableEncryption: true);
 ```
 
 **2. "Cache is encrypted but encryption is not enabled"**
 ```dart
 // Solution: Either enable encryption or migrate to plain cache
-await NeeroTtlEtagCache.migrateEncryption(enableEncryption: false);
+await TtlEtagCache.migrateEncryption(enableEncryption: false);
 ```
 
 **3. Data not updating**
@@ -709,7 +709,7 @@ void dispose() {
 
 ## 📝 API Reference
 
-### NeeroTtlEtagCache
+### TtlEtagCache
 
 Main entry point for cache operations.
 

@@ -3,7 +3,7 @@ import UIKit
 import XCTest
 
 
-@testable import neero_ttl_etag_cache
+@testable import ttl_etag_cache
 
 // This demonstrates a simple unit test of the Swift portion of this plugin's implementation.
 //
@@ -12,7 +12,7 @@ import XCTest
 class RunnerTests: XCTestCase {
 
   func testGetPlatformVersion() {
-    let plugin = NeeroTtlEtagCachePlugin()
+    let plugin = TtlEtagCachePlugin()
 
     let call = FlutterMethodCall(methodName: "getPlatformVersion", arguments: [])
 

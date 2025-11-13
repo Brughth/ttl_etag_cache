@@ -22,7 +22,7 @@ If you're implementing caching for the first time:
 
 ```yaml
 dependencies:
-  neero_ttl_etag_cache: ^1.0.0
+  ttl_etag_cache: ^1.0.0
 ```
 
 **Step 2: Initialize**
@@ -30,7 +30,7 @@ dependencies:
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NeeroTtlEtagCache.init();
+  await TtlEtagCache.init();
   runApp(MyApp());
 }
 ```
@@ -66,7 +66,7 @@ StreamBuilder<CacheTtlEtagState<User>>(
 Initialize with encryption enabled:
 
 ```dart
-await NeeroTtlEtagCache.init(enableEncryption: true);
+await TtlEtagCache.init(enableEncryption: true);
 ```
 
 ### On Existing Plain Cache
@@ -77,10 +77,10 @@ This preserves all cached data by encrypting it:
 
 ```dart
 // Step 1: Enable encryption
-await NeeroTtlEtagCache.migrateEncryption(enableEncryption: true);
+await TtlEtagCache.migrateEncryption(enableEncryption: true);
 
 // Step 2: Verify
-print('Encryption enabled: ${NeeroTtlEtagCache.isEncryptionEnabled}');
+print('Encryption enabled: ${TtlEtagCache.isEncryptionEnabled}');
 
 // Step 3: Check statistics
 final cache = ReactiveCacheDio();
@@ -94,10 +94,10 @@ This is faster but loses all cached data:
 
 ```dart
 // Step 1: Clear existing cache
-await NeeroTtlEtagCache.clearAll();
+await TtlEtagCache.clearAll();
 
 // Step 2: Reinitialize with encryption
-await NeeroTtlEtagCache.init(enableEncryption: true);
+await TtlEtagCache.init(enableEncryption: true);
 ```
 
 **Recommended Approach:**
@@ -110,7 +110,7 @@ class CacheManager {
     
     try {
       // Migrate existing cache
-      await NeeroTtlEtagCache.migrateEncryption(enableEncryption: true);
+      await TtlEtagCache.migrateEncryption(enableEncryption: true);
       
       // Save preference
       await SharedPreferences.getInstance().then(
@@ -135,7 +135,7 @@ class CacheManager {
 
 ```dart
 // This decrypts all cache entries
-await NeeroTtlEtagCache.migrateEncryption(enableEncryption: false);
+await TtlEtagCache.migrateEncryption(enableEncryption: false);
 ```
 
 **Important Notes:**
@@ -148,8 +148,8 @@ await NeeroTtlEtagCache.migrateEncryption(enableEncryption: false);
 
 ```dart
 // Clear cache and start fresh
-await NeeroTtlEtagCache.clearAll();
-await NeeroTtlEtagCache.init(enableEncryption: false);
+await TtlEtagCache.clearAll();
+await TtlEtagCache.init(enableEncryption: false);
 ```
 
 ---
@@ -183,7 +183,7 @@ final repo = CachedTtlEtagRepository<User>(
 
 ```dart
 // Step 1: Invalidate old cache
-await NeeroTtlEtagCache.invalidate<User>(
+await TtlEtagCache.invalidate<User>(
   url: 'https://api.example.com/user',
 );
 
@@ -226,10 +226,10 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 ```dart
 // Clear cache if schema is incompatible
-await NeeroTtlEtagCache.clearAll();
+await TtlEtagCache.clearAll();
 
 // Reinitialize
-await NeeroTtlEtagCache.init();
+await TtlEtagCache.init();
 ```
 
 ---
@@ -241,7 +241,7 @@ await NeeroTtlEtagCache.init();
 ```dart
 Future<void> logout() async {
   // Clear all cache and reset encryption
-  await NeeroTtlEtagCache.clearAndResetEncryption();
+  await TtlEtagCache.clearAndResetEncryption();
   
   // Or if using per-user encryption
   final encryption = EncryptionService();
@@ -354,8 +354,8 @@ Timer.periodic(Duration(days: 1), (_) async {
 
 ```dart
 // Solution: Clear cache and start fresh
-await NeeroTtlEtagCache.clearAll();
-await NeeroTtlEtagCache.init(enableEncryption: true);
+await TtlEtagCache.clearAll();
+await TtlEtagCache.init(enableEncryption: true);
 ```
 
 **2. "Duplicate cache entries"**
@@ -381,7 +381,7 @@ await repository.fetch();
 
 ```dart
 // Solution: Clear old cache
-await NeeroTtlEtagCache.clearAll();
+await TtlEtagCache.clearAll();
 
 // Reduce TTL values
 defaultTtl: Duration(minutes: 1)  // instead of hours
@@ -396,17 +396,17 @@ void main() {
   group('Migration Tests', () {
     test('should migrate to encrypted cache', () async {
       // Setup plain cache
-      await NeeroTtlEtagCache.init(enableEncryption: false);
-      await NeeroTtlEtagCache.refetch<User>(
+      await TtlEtagCache.init(enableEncryption: false);
+      await TtlEtagCache.refetch<User>(
         url: 'https://api.example.com/user',
         fromJson: (json) => User.fromJson(json),
       );
       
       // Migrate to encrypted
-      await NeeroTtlEtagCache.migrateEncryption(enableEncryption: true);
+      await TtlEtagCache.migrateEncryption(enableEncryption: true);
       
       // Verify
-      expect(NeeroTtlEtagCache.isEncryptionEnabled, true);
+      expect(TtlEtagCache.isEncryptionEnabled, true);
       
       final stats = await ReactiveCacheDio().getStatistics();
       expect(stats.encryptedEntries, greaterThan(0));

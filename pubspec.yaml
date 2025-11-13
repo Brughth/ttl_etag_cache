@@ -1,7 +1,7 @@
-name: neero_ttl_etag_cache
+name: ttl_etag_cache
 description: A powerful, reactive caching solution for Flutter with TTL, ETag support, and optional AES-256 encryption for offline-first applications.
 version: 1.0.2
-homepage: https://github.com/yourusername/neero_ttl_etag_cache
+homepage: https://github.com/loicgeek/ttl_etag_cache
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -44,7 +44,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.neero_ttl_etag_cache
-        pluginClass: NeeroTtlEtagCachePlugin
+        package: com.example.ttl_etag_cache
+        pluginClass: TtlEtagCachePlugin
       ios:
-        pluginClass: NeeroTtlEtagCachePlugin
+        pluginClass: TtlEtagCachePlugin

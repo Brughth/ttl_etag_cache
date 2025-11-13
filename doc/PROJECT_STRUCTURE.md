@@ -3,9 +3,9 @@
 Complete overview of the Neero TTL/ETag Cache plugin structure.
 
 ```
-neero_ttl_etag_cache/
+ttl_etag_cache/
 ├── lib/
-│   ├── neero_ttl_etag_cache.dart          # Main library entry point
+│   ├── ttl_etag_cache.dart          # Main library entry point
 │   └── src/
 │       ├── models/
 │       │   ├── cached_ttl_etag_response.dart      # Isar model for cached data
@@ -44,12 +44,12 @@ neero_ttl_etag_cache/
 
 ### 1. Main Entry Point
 
-**File:** `lib/neero_ttl_etag_cache.dart`
+**File:** `lib/ttl_etag_cache.dart`
 
 The primary interface for the plugin. Exports all public APIs.
 
 ```dart
-library neero_ttl_etag_cache;
+library ttl_etag_cache;
 
 export 'src/services/reactive_ttl_etag_cache_dio.dart';
 export 'src/services/encryption_service.dart';
@@ -57,7 +57,7 @@ export 'src/models/cached_ttl_etag_response.dart';
 export 'src/models/cache_ttl_etag_state.dart';
 export 'src/repositories/cached_ttl_etag_repository.dart';
 
-class NeeroTtlEtagCache {
+class TtlEtagCache {
   static Future<void> init({...});
   static Future<void> refetch<T>({...});
   static Future<void> invalidate<T>({...});
@@ -366,7 +366,7 @@ linter:
 ### pubspec.yaml Structure
 
 ```yaml
-name: neero_ttl_etag_cache
+name: ttl_etag_cache
 description: Reactive caching with TTL, ETag, and encryption
 version: 1.0.0
 

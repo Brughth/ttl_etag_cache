@@ -8,11 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.2] - 2025-11-13
 
 ### Added
-- Added `CachedTtlEtagConfig` class for better configuration management
-- Added `copyWith()` method to `CachedTtlEtagConfig` for easy configuration modification
+- Added `CacheTtlEtagConfig` class for better configuration management
+- Added `copyWith()` method to `CacheTtlEtagConfig` for easy configuration modification
 
 ### Changed
-- **BREAKING**: `CachedTtlEtagRepository` now accepts a single `CachedTtlEtagConfig` parameter instead of multiple individual parameters
+- **BREAKING**: `CachedTtlEtagRepository` now accepts a single `CacheTtlEtagConfig` parameter instead of multiple individual parameters
 - Improved repository configuration pattern for better code organization and reusability
 
 ### Migration Guide
@@ -27,7 +27,7 @@ final repository = CachedTtlEtagRepository<MyModel>(
 );
 
 // After (v1.0.2)
-final config = CachedTtlEtagConfig<MyModel>(
+final config = CacheTtlEtagConfig<MyModel>(
   url: 'https://api.example.com/data',
   fromJson: (json) => MyModel.fromJson(json),
   method: 'GET',
@@ -66,12 +66,12 @@ final repository = CachedTtlEtagRepository<MyModel>(config);
 - BroadcastStream for multi-listener support
 
 ### Features
-- `NeeroTtlEtagCache.init()` - Initialize cache system
-- `NeeroTtlEtagCache.refetch()` - Fetch with caching
-- `NeeroTtlEtagCache.invalidate()` - Delete cache entries
-- `NeeroTtlEtagCache.clearAll()` - Clear all cache
-- `NeeroTtlEtagCache.clearAndResetEncryption()` - Reset encryption
-- `NeeroTtlEtagCache.migrateEncryption()` - Migrate encryption mode
+- `TtlEtagCache.init()` - Initialize cache system
+- `TtlEtagCache.refetch()` - Fetch with caching
+- `TtlEtagCache.invalidate()` - Delete cache entries
+- `TtlEtagCache.clearAll()` - Clear all cache
+- `TtlEtagCache.clearAndResetEncryption()` - Reset encryption
+- `TtlEtagCache.migrateEncryption()` - Migrate encryption mode
 - `CachedTtlEtagRepository` - Repository pattern implementation
 - `CacheTtlEtagState` - Comprehensive state management
 - `EncryptionService` - AES-256 encryption service

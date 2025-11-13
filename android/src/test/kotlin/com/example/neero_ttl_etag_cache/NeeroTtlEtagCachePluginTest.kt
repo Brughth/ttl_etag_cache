@@ -1,4 +1,4 @@
-package com.example.neero_ttl_etag_cache
+package com.example.ttl_etag_cache
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -16,7 +16,7 @@ import org.mockito.Mockito
 internal class NeeroTtlEtagCachePluginTest {
   @Test
   fun onMethodCall_getPlatformVersion_returnsExpectedValue() {
-    val plugin = NeeroTtlEtagCachePlugin()
+    val plugin = TtlEtagCachePlugin()
 
     val call = MethodCall("getPlatformVersion", null)
     val mockResult: MethodChannel.Result = Mockito.mock(MethodChannel.Result::class.java)

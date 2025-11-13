@@ -1,4 +1,4 @@
-group = "com.example.neero_ttl_etag_cache"
+group = "com.example.ttl_etag_cache"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    namespace = "com.example.neero_ttl_etag_cache"
+    namespace = "com.example.ttl_etag_cache"
 
     compileSdk = 35
 

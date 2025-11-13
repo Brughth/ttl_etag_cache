@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class NeeroTtlEtagCachePlugin: NSObject, FlutterPlugin {
+public class TtlEtagCachePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "neero_ttl_etag_cache", binaryMessenger: registrar.messenger())
-    let instance = NeeroTtlEtagCachePlugin()
+    let channel = FlutterMethodChannel(name: "ttl_etag_cache", binaryMessenger: registrar.messenger())
+    let instance = TtlEtagCachePlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 

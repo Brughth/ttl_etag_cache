@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="neero_ttl_etag_cache_example"
+        android:label="ttl_etag_cache_example"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

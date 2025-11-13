@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:neero_ttl_etag_cache/neero_ttl_etag_cache.dart';
+import 'package:ttl_etag_cache/ttl_etag_cache.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize cache with encryption
-  await NeeroTtlEtagCache.init(enableEncryption: true);
+  await TtlEtagCache.init(enableEncryption: true);
 
   runApp(const MyApp());
 }
@@ -108,7 +108,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   void initState() {
     super.initState();
     _repository = CachedTtlEtagRepository<User>(
-      config: CachedTtlEtagConfig<User>(
+      config: CacheTtlEtagConfig<User>(
         url: 'https://jsonplaceholder.typicode.com/users/${widget.userId}',
         headers: {"accept": "application/json"},
         fromJson: (json) => User.fromJson(json),
@@ -248,7 +248,7 @@ class _PostsListScreenState extends State<PostsListScreen> {
   void initState() {
     super.initState();
     _repository = CachedTtlEtagRepository<List<Post>>(
-      config: CachedTtlEtagConfig<List<Post>>(
+      config: CacheTtlEtagConfig<List<Post>>(
         url: 'https://jsonplaceholder.typicode.com/posts',
         method: "GET",
         headers: {"accept": "application/json"},
@@ -341,14 +341,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _userRepo = CachedTtlEtagRepository<User>(
-      config: CachedTtlEtagConfig(
+      config: CacheTtlEtagConfig(
         url: 'https://jsonplaceholder.typicode.com/users/1',
         fromJson: (json) => User.fromJson(json),
         defaultTtl: const Duration(minutes: 5),
       ),
     );
     _postsRepo = CachedTtlEtagRepository<List<Post>>(
-      config: CachedTtlEtagConfig(
+      config: CacheTtlEtagConfig(
         url: 'https://jsonplaceholder.typicode.com/posts',
         fromJson: (json) =>
             (json as List).take(5).map((e) => Post.fromJson(e)).toList(),
@@ -469,14 +469,14 @@ class _CacheSettingsScreenState extends State<CacheSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _encryptionEnabled = NeeroTtlEtagCache.isEncryptionEnabled;
+    _encryptionEnabled = TtlEtagCache.isEncryptionEnabled;
   }
 
   Future<void> _toggleEncryption(bool value) async {
     setState(() => _isLoading = true);
 
     try {
-      await NeeroTtlEtagCache.migrateEncryption(enableEncryption: value);
+      await TtlEtagCache.migrateEncryption(enableEncryption: value);
       setState(() {
         _encryptionEnabled = value;
         _isLoading = false;
@@ -504,7 +504,7 @@ class _CacheSettingsScreenState extends State<CacheSettingsScreen> {
   }
 
   Future<void> _clearCache() async {
-    await NeeroTtlEtagCache.clearAll();
+    await TtlEtagCache.clearAll();
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Cache cleared successfully')),

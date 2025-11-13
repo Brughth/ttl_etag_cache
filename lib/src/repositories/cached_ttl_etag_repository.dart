@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:isar_community/isar.dart';
-import 'package:neero_ttl_etag_cache/src/models/cache_ttl_etag_config.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../models/cached_ttl_etag_response.dart';
 import '../models/cache_ttl_etag_state.dart';
+import '../models/cache_ttl_etag_config.dart';
 
 /// Repository pattern implementation for cached data access
 ///
@@ -15,7 +15,7 @@ import '../models/cache_ttl_etag_state.dart';
 /// Example:
 /// ```dart
 /// final userRepo = CachedTtlEtagRepository<User>(
-///   config: CachedTtlEtagConfig<User>(
+///   config: CacheTtlEtagConfig<User>(
 ///     url: 'https://api.example.com/user/123',
 ///     fromJson: (json) => User.fromJson(json),
 ///     defaultTtl: Duration(minutes: 5),
@@ -36,7 +36,7 @@ import '../models/cache_ttl_etag_state.dart';
 /// userRepo.dispose();
 /// ```
 class CachedTtlEtagRepository<T> {
-  final CachedTtlEtagConfig<T> config;
+  final CacheTtlEtagConfig<T> config;
 
   late final String _cacheKey;
   late final BehaviorSubject<CacheTtlEtagState<T>> _stateController;

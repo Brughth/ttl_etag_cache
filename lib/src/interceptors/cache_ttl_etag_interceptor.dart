@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:isar_community/isar.dart';
-import '../../neero_ttl_etag_cache.dart';
+import '../../ttl_etag_cache.dart';
 import '../services/reactive_cache_dio.dart';
 
 /// Dio interceptor for automatic caching with TTL and ETag support

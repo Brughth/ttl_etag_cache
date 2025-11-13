@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "neero_ttl_etag_cache",
+            "name": "ttl_etag_cache",
             "request": "launch",
             "type": "dart",
             // "args": [
@@ -13,13 +13,13 @@
             // ]
         },
         {
-            "name": "neero_ttl_etag_cache (profile mode)",
+            "name": "ttl_etag_cache (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "neero_ttl_etag_cache (release mode)",
+            "name": "ttl_etag_cache (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

@@ -1,6 +1,6 @@
-# neero_ttl_etag_cache_example
+# ttl_etag_cache_example
 
-Demonstrates how to use the neero_ttl_etag_cache plugin.
+Demonstrates how to use the ttl_etag_cache plugin.
 
 ## Getting Started
 

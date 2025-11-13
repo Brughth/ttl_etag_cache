@@ -9,7 +9,7 @@ Your professional Flutter caching plugin is now complete with all necessary file
 ### Core Library Files
 
 ✅ **Main Entry Point**
-- `lib/neero_ttl_etag_cache.dart` - Public API with encryption toggle
+- `lib/ttl_etag_cache.dart` - Public API with encryption toggle
 
 ✅ **Models**
 - `lib/src/models/cache_ttl_etag_state.dart` - UI state management
@@ -55,7 +55,7 @@ Your professional Flutter caching plugin is now complete with all necessary file
 Before using the plugin, generate the Isar database code:
 
 ```bash
-cd neero_ttl_etag_cache
+cd ttl_etag_cache
 flutter pub get
 flutter pub run build_runner build --delete-conflicting-outputs
 ```
@@ -77,15 +77,15 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  neero_ttl_etag_cache:
-    path: ../neero_ttl_etag_cache
+  ttl_etag_cache:
+    path: ../ttl_etag_cache
 ```
 
 Or publish to pub.dev and use:
 
 ```yaml
 dependencies:
-  neero_ttl_etag_cache: ^1.0.0
+  ttl_etag_cache: ^1.0.0
 ```
 
 ### 4. Initialize in Your App
@@ -95,10 +95,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Without encryption
-  await NeeroTtlEtagCache.init();
+  await TtlEtagCache.init();
   
   // OR with encryption
-  await NeeroTtlEtagCache.init(enableEncryption: true);
+  await TtlEtagCache.init(enableEncryption: true);
   
   runApp(MyApp());
 }
@@ -242,17 +242,17 @@ await repo.invalidate();  // Deletes cache entry
 ### Enable Encryption
 
 ```dart
-await NeeroTtlEtagCache.init(enableEncryption: true);
+await TtlEtagCache.init(enableEncryption: true);
 ```
 
 ### Migrate Existing Cache
 
 ```dart
 // Encrypt plain cache
-await NeeroTtlEtagCache.migrateEncryption(enableEncryption: true);
+await TtlEtagCache.migrateEncryption(enableEncryption: true);
 
 // Decrypt encrypted cache
-await NeeroTtlEtagCache.migrateEncryption(enableEncryption: false);
+await TtlEtagCache.migrateEncryption(enableEncryption: false);
 ```
 
 ### Per-User Encryption
@@ -268,7 +268,7 @@ await encryption.deleteUserKey(userId);
 ### Reset on Logout
 
 ```dart
-await NeeroTtlEtagCache.clearAndResetEncryption();
+await TtlEtagCache.clearAndResetEncryption();
 ```
 
 ## 📊 Cache Management
@@ -289,7 +289,7 @@ print('Expired: ${stats.expiredEntries}');
 ### Clear All Cache
 
 ```dart
-await NeeroTtlEtagCache.clearAll();
+await TtlEtagCache.clearAll();
 ```
 
 ### Cleanup Duplicates
@@ -358,7 +358,7 @@ final customDio = Dio(BaseOptions(
   headers: {'Authorization': 'Bearer $token'},
 ));
 
-await NeeroTtlEtagCache.init(
+await TtlEtagCache.init(
   dio: customDio,
   enableEncryption: true,
 );
@@ -368,7 +368,7 @@ await NeeroTtlEtagCache.init(
 
 ```dart
 final enableEncryption = kReleaseMode;  // Only in production
-await NeeroTtlEtagCache.init(enableEncryption: enableEncryption);
+await TtlEtagCache.init(enableEncryption: enableEncryption);
 ```
 
 ## 🚨 Important Notes
